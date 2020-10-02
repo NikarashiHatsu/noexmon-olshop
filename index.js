@@ -8,8 +8,10 @@ const AppMiddleware = require('./middleware/AppMiddleware');
 app.use(AppMiddleware);
 
 // Routes
+const AuthRouter = require('./router/AuthRouter');
 const ItemRouter = require('./router/ItemsRouter');
-app.use('/items', ItemRouter);
+app.use('/api/user', AuthRouter);
+app.use('/api/items', ItemRouter);
 
 // Connect to DB
 mongoose.connect(
