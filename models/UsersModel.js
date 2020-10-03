@@ -19,10 +19,6 @@ const usersSchema = mongoose.Schema({
     max: 1024,
     min: 6
   },
-  items: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Items",
-  },
   timestamp: {
     type: Date,
     default: Date.now

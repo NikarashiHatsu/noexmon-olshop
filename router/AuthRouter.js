@@ -5,9 +5,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const UsersModel = require('../models/UsersModel');
+const ItemsModel = require('../models/ItemsModel');
 const AuthMiddleware = require('../middleware/AuthMiddleware');
 const { registerValidation, loginValidation } = require('../validation/UserValidation');
 
+/**
+ * Register the user
+ */
 router.post('/register', async (req, res) => {
   // Validate before create a user
   const { error } = registerValidation(req.body);
@@ -36,6 +40,9 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * Log the user in
+ */
 router.post('/login', async (req, res) => {
   // Validation
   const { error } = loginValidation(req.body);
@@ -57,22 +64,29 @@ router.post('/login', async (req, res) => {
   });
 });
 
+/**
+ * Retrieve your own data
+ */
 router.get('/', AuthMiddleware, async (req, res) => {
   try {
-    const userData = await UsersModel.aggregate([
-      {
-        $lookup: {
-          from: 'items',
-          localField: '_id',
-          foreignField: 'itemPublisher',
-          as: 'items'
-        }
-      }
-    ]);
-    res.json( userData );
+    const userData = await UsersModel.findById( req.user._id );
+    const userItems = await ItemsModel.find({ itemPublisher: req.user._id });
+    res.json({ user: userData, items: userItems });
   } catch (err) {
     res.status(500).json({ err });
   }
 });
 
+/**
+ * Retrieve someone else's data
+ */
+router.get('/:userId', async(req, res) => {
+  try {
+    const userData = await UsersModel.findById( req.params.userId );
+    const userItems = await ItemsModel.find({ itemPublisher: userData._id });
+    res.json({ user: userData, items: userItems });
+  } catch (err) {
+    res.status(500).json({ err });
+  }
+})
 module.exports = router;
