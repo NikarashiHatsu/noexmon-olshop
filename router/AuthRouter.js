@@ -58,11 +58,18 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/', AuthMiddleware, async (req, res) => {
-  const data = jwt.decode(req.header('Auth-Token'), { json: true });
-
   try {
-    const userData = await UsersModel.findById( data._id );
-    res.json({ userData });
+    const userData = await UsersModel.aggregate([
+      {
+        $lookup: {
+          from: 'items',
+          localField: '_id',
+          foreignField: 'itemPublisher',
+          as: 'items'
+        }
+      }
+    ]);
+    res.json( userData );
   } catch (err) {
     res.status(500).json({ err });
   }

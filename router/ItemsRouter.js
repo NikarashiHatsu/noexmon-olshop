@@ -40,7 +40,7 @@ router.post('/', AuthMiddleware, async (req, res) => {
  */
 router.get('/:itemId',  async (req, res) => {
   try {
-    const item = await ItemsModel.findById( req.params.itemId );
+    const item = await ItemsModel.findById( req.params.itemId ).populate('itemPublisher');
     res.json({ product: item, publisher: req.publisher });
   } catch (err) {
     res.status(500).json({ message: err });
