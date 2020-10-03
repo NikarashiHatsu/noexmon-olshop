@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const UsersModel = require('../models/UsersModel');
+const AuthMiddleware = require('../middleware/AuthMiddleware');
 const { registerValidation, loginValidation } = require('../validation/UserValidation');
 
 router.post('/register', async (req, res) => {
@@ -54,6 +55,17 @@ router.post('/login', async (req, res) => {
     message: 'User logged in',
     token: token,
   });
+});
+
+router.get('/', AuthMiddleware, async (req, res) => {
+  const data = jwt.decode(req.header('Auth-Token'), { json: true });
+
+  try {
+    const userData = await UsersModel.findById( data._id );
+    res.json({ userData });
+  } catch (err) {
+    res.status(500).json({ err });
+  }
 });
 
 module.exports = router;

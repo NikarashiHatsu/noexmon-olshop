@@ -14,13 +14,12 @@ app.use('/api/user', AuthRouter);
 app.use('/api/items', ItemRouter);
 
 // Connect to DB
-mongoose.connect(
-  process.env.DB_CONNECTION,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-);
+mongoose.connect(process.env.DB_CONNECTION, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+}).catch((err) => { 
+  console.log(err)
+});
 
 // Listener
 app.listen(3000);
