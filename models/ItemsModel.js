@@ -18,8 +18,8 @@ const ItemsSchema = mongoose.Schema({
     required: true
   },
   itemPublisher: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users"
   },
   timestamp: {
     type: Date,
