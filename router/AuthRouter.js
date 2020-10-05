@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 
 const UsersModel = require('../models/UsersModel');
 const ItemsModel = require('../models/ItemsModel');
+const FavouriteModel = require('../models/FavouritesModel');
 const AuthMiddleware = require('../middleware/AuthMiddleware');
 const { registerValidation, loginValidation } = require('../validation/UserValidation');
 
@@ -71,7 +72,8 @@ router.get('/', AuthMiddleware, async (req, res) => {
   try {
     const userData = await UsersModel.findById( req.user._id );
     const userItems = await ItemsModel.find({ itemPublisher: req.user._id });
-    res.json({ user: userData, items: userItems });
+    const favouriteItems = await FavouriteModel.find({ userId: req.user._id });
+    res.json({ user: userData, items: userItems, favouriteItems: favouriteItems });
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -84,7 +86,8 @@ router.get('/:userId', async(req, res) => {
   try {
     const userData = await UsersModel.findById( req.params.userId );
     const userItems = await ItemsModel.find({ itemPublisher: userData._id });
-    res.json({ user: userData, items: userItems });
+    const favouriteItems = await FavouriteModel.find({ userId: userData._id });
+    res.json({ user: userData, items: userItems, favouriteItems: favouriteItems });
   } catch (err) {
     res.status(500).json({ err });
   }
