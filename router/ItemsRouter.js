@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ItemsModel = require('../models/ItemsModel');
+const CommentsModel = require('../models/CommentsModel');
 const AuthMiddleware = require('../middleware/AuthMiddleware');
 
 /**
@@ -40,8 +41,9 @@ router.post('/', AuthMiddleware, async (req, res) => {
  */
 router.get('/:itemId',  async (req, res) => {
   try {
+    const comments = await CommentsModel.find({ post: req.params.itemId });
     const item = await ItemsModel.findById( req.params.itemId ).populate('itemPublisher');
-    res.json({ product: item, publisher: req.publisher });
+    res.json({ product: item, comments: comments });
   } catch (err) {
     res.status(500).json({ message: err });
   }

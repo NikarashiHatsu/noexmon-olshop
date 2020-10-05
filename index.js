@@ -10,8 +10,10 @@ app.use(AppMiddleware);
 // Routes
 const AuthRouter = require('./router/AuthRouter');
 const ItemRouter = require('./router/ItemsRouter');
+const CommentRouter = require('./router/CommentsRouter');
 app.use('/api/user', AuthRouter);
 app.use('/api/items', ItemRouter);
+app.use('/api/comments', CommentRouter);
 
 // Connect to DB
 mongoose.connect(process.env.DB_CONNECTION, { 
